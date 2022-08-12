@@ -362,52 +362,58 @@ def create_venue_submission():
   # TODO: insert form data as a new Venue record in the db, instead
   # TODO: modify data to be the data object returned from db insertion
   error = False
-  try:
-    name = request.form['name']
-    city = request.form['city']
-    state = request.form['state']
-    address = request.form['address']
-    phone = request.form['phone']
-    genres = request.form.getlist('genres')
-    facebook_link = request.form['facebook_link']
-    image_link = request.form['image_link']
-    website_link = request.form['website_link']
+  form = VenueForm(request.form)
+  print(form.validate)
+  if form.validate():
+    try:
+      name = request.form['name']
+      city = request.form['city']
+      state = request.form['state']
+      address = request.form['address']
+      phone = request.form['phone']
+      genres = request.form.getlist('genres')
+      facebook_link = request.form['facebook_link']
+      image_link = request.form['image_link']
+      website_link = request.form['website_link']
 
-    #verification si le dans la request il y a le
-    if 'seeking_talent' in request.form:
-      seeking_talent = True
-    else:
-      seeking_talent = False
+      #verification si le dans la request il y a le
+      if 'seeking_talent' in request.form:
+        seeking_talent = True
+      else:
+        seeking_talent = False
 
-    seeking_description = request.form['seeking_description']
+      seeking_description = request.form['seeking_description']
 
 
 
-    venue = Venue(
-      name = name,
-      city = city, 
-      state = state, 
-      address = address,
-      phone = phone,
-      genres = genres,
-      seeking_talent = seeking_talent,
-      seeking_description = seeking_description,
-      website_link = website_link,
-      image_link = image_link,
-      facebook_link = facebook_link)
+      venue = Venue(
+        name = name,
+        city = city, 
+        state = state, 
+        address = address,
+        phone = phone,
+        genres = genres,
+        seeking_talent = seeking_talent,
+        seeking_description = seeking_description,
+        website_link = website_link,
+        image_link = image_link,
+        facebook_link = facebook_link)
 
-    print(venue)
+      print(venue)
 
-    db.session.add(venue)
-    db.session.commit()
-  except:
-    error = True
-    db.session.rollback()
-    print(sys.exc_info())
-  finally:
-    db.session.close()
+      db.session.add(venue)
+      db.session.commit()
+    except:
+      error = True
+      db.session.rollback()
+      print(sys.exc_info())
+    finally:
+      db.session.close()
+  else:
+    return render_template('forms/new_venue.html', form=form)
+
+
   
-
  # TODO: on unsuccessful db insert, flash an error instead.
   # e.g., flash('An error occurred. Venue ' + data.name + ' could not be listed.')
   # see: http://flask.pocoo.org/docs/1.0/patterns/flashing/
