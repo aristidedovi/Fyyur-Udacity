@@ -9,6 +9,14 @@ def validate_phone(form, field):
     if not re.search(r"^[0-9]*$", field.data):
         raise ValidationError("Phone number should only contain digits.")
 
+def my_length_check(form, field):
+    if len(field.data) > 120:
+        raise ValidationError('Field must be less than 120 characters')
+
+def image_link_length_check(form, field):
+    if len(field.data) > 500:
+        raise ValidationError('Field must be less than 120 characters')
+
 
 class ShowForm(Form):
     artist_id = StringField(
@@ -25,10 +33,10 @@ class ShowForm(Form):
 
 class VenueForm(Form):
     name = StringField(
-        'name', validators=[DataRequired()]
+        'name', validators=[DataRequired(), my_length_check]
     )
     city = StringField(
-        'city', validators=[DataRequired()]
+        'city', validators=[DataRequired(), my_length_check]
     )
     state = SelectField(
         'state', validators=[DataRequired()],
@@ -87,13 +95,13 @@ class VenueForm(Form):
         ]
     )
     address = StringField(
-        'address', validators=[DataRequired()]
+        'address', validators=[DataRequired(), my_length_check]
     )
     phone = StringField(
         'phone', validators=[DataRequired(), validate_phone]
     )
     image_link = StringField(
-        'image_link'
+        'image_link', validators=[image_link_length_check]
     )
     genres = SelectMultipleField(
         # TODO implement enum restriction
@@ -121,26 +129,26 @@ class VenueForm(Form):
         ]
     )
     facebook_link = StringField(
-        'facebook_link', validators=[URL()]
+        'facebook_link', validators=[URL(), my_length_check]
     )
     website_link = StringField(
-        'website_link'
+        'website_link', validators=[my_length_check]
     )
 
     seeking_talent = BooleanField( 'seeking_talent' )
 
     seeking_description = StringField(
-        'seeking_description'
+        'seeking_description', validators=[image_link_length_check]
     )
 
 
 
 class ArtistForm(Form):
     name = StringField(
-        'name', validators=[DataRequired()]
+        'name', validators=[DataRequired(), my_length_check]
     )
     city = StringField(
-        'city', validators=[DataRequired()]
+        'city', validators=[DataRequired(), my_length_check]
     )
     state = SelectField(
         'state', validators=[DataRequired()],
@@ -203,7 +211,7 @@ class ArtistForm(Form):
         'phone', validators=[DataRequired(), validate_phone]
     )
     image_link = StringField(
-        'image_link'
+        'image_link', validators=[image_link_length_check]
     )
     genres = SelectMultipleField(
         'genres', validators=[DataRequired()],
@@ -231,16 +239,16 @@ class ArtistForm(Form):
      )
     facebook_link = StringField(
         # TODO implement enum restriction
-        'facebook_link', validators=[URL()]
+        'facebook_link', validators=[URL(), my_length_check]
      )
 
     website_link = StringField(
-        'website_link'
+        'website_link', validators=[my_length_check]
      )
 
     seeking_venue = BooleanField( 'seeking_venue' )
 
     seeking_description = StringField(
-            'seeking_description'
+            'seeking_description', validators=[image_link_length_check]
      )
 
